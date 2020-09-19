@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1593708989269.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1844350382",
+    "id" : "12A7DB99",
+    "lastKnownWriteTime" : 1593953181,
+    "last_content_update" : 1593953181401,
+    "path" : "~/Harvard X Data Science/course2_Visualizations_4.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "12,63",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

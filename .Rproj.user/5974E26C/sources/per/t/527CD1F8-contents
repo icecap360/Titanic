@@ -1,0 +1,113 @@
+#tidy data: each row corresponds one datapoint
+#wide data: multiple observasations in each row
+  #and one header row
+#gather, convert wide data into tidydata, by converting values into columns
+  #first argument: sets name of column that will hold the variable that iss currently kept in wide data column name
+  #second arguement, name for values in column cells
+  #all other columns you want to add on or gather on like ..-state,-add.. , you could also get consecutive columns like hep:rub 
+  #other arguments: na.rm, convert which is for int factor_key
+library(tidyverse) 
+path <- system.file("extdata", package="dslabs")
+filename <- file.path(path,  "fertility-two-countries-example.csv")
+wide_data <- read_csv(filename)
+new_tidy_data <- wide_data %>%
+  gather(year, fertility, `1960`:`2015`, convert = TRUE) #instead of specifying columns to gather you could specify columns not to gather
+head(new_tidy_data)
+#spread opposite of gather, used to convert backk into wide format
+
+
+#usually data is not so clean, following example has wide data with column names that do not seperate year and variable
+path <- system.file("extdata", package = "dslabs")
+filename <- file.path(path, "life-expectancy-and-fertility-two-countries-example.csv")
+raw_dat <- read_csv(filename)
+dat <- raw_dat %>% gather(key, value, -country) #store columns as keys temporarly
+head(dat)
+dat$key[1:5]
+#tidyr has function seperate to help seperate the column 
+  #takes in data, name of column to be seperated, names of newe columns, character that seperates
+  #cause 1960_life_expectancy has 2 underscores, we add third column to catch this
+dat %>% separate(key, c("year", "first_variable_name", "second_variable_name"), 
+                 fill = "right")
+#better way would be to merge the columns when extra seperator
+dat %>% separate(key, c("year", "variable_name"), sep = "_", extra = "merge") %>%
+  spread(variable_name, value) 
+#we could also use unite function
+dat %>% 
+  separate(key, c("year", "first_variable_name", "second_variable_name"), fill = "right") %>%
+  unite(variable_name, first_variable_name, second_variable_name, sep="_") %>%
+  spread(variable_name, value) %>%
+  rename(fertility = fertility_NA)
+
+path<-file.path(getwd())
+dat <- read_csv("times.csv")
+dat %>% gather(year,times, `2015`, `2017`)
+#so sometimes you need to use spread to get column var to be seperate for each variable
+    #such as var =population or total then spread(key=var, value = population)
+
+#FUNCTION TO LEARN 
+#co2_wide <- data.frame(matrix(co2, ncol = 12, byrow = TRUE)) %>% 
+  #setNames(1:12) %>%
+  #mutate(year = as.character(1959:1997))
+
+
+#COMBINING TABLE
+#join functions make sure that tables are combined so that matching rows are together
+#main idea is to combine from one or two common columns 
+#order of tables in left_join differ when each table does not contain same rows e.g. one has ohio other does not
+#left_join keeps only rows from left tab, likewise right_join
+#inner_join() only keeps rows that have information in both tables, think as intersect
+#full_join() keeps all rows from both tables., think as union
+#semi_join() keeps the part of first table for which we have information in the second, does not add column in second, also a filtering join
+#anti_join() keeps the elements of the first table for which there is no information in the second.
+#tab1 <- slice(murders, 1:6) %>% select(state, population)
+#tab1
+#tab2 <- slice(results_us_election_2016, c(1:3, 5, 7:8)) %>% select(state, electoral_votes)
+#tab2
+#left_join(tab1,tab2)
+
+#BINDING TABLES
+#regardless of row order, just combine without matching
+#must have same dimensions
+making_table =bind_cols(a=1:3, b=4:6)
+#bind_cols makes tibbles, various other ones use cbind
+#also bind_rows
+#all these also work on vectors
+#SET OPERATORS
+#intersect is not only for vectors but df as well
+    #can also work for column names
+#same with union
+#setdiff not symmetric
+#setequal does not use order
+
+#WEBSCRAPING
+library(rvest)
+url <- "https://en.wikipedia.org/wiki/Murder_in_the_United_States_by_state"
+h <- read_html(url)
+class(h)
+h
+#rvest inclludes functions to extract nodes or <> from an html document
+  #if you want all nodes use html_nodes, if you just want the first one use html_node
+tab <- h %>% html_nodes("table") #neeed to know css selector to use this function
+tab <- tab[[2]]
+tab <- tab %>% html_table #converts to df
+class(tab)
+# SelectorGadget is piece of software that allows you to interactively determine what CSS selector 
+  #you need to extract specific components from the webpage.
+get_recipe <- function(url){
+  h <- read_html(url)
+  recipe <- h %>% html_node(".o-AssetTitle__a-HeadlineText") %>% html_text()
+  prep_time <- h %>% html_node(".m-RecipeInfo__a-Description--Total") %>% html_text()
+  ingredients <- h %>% html_nodes(".o-Ingredients__a-Ingredient") %>% html_text()
+  return(list(recipe = recipe, prep_time = prep_time, ingredients = ingredients))
+}
+dat <- get_recipe("http://www.foodnetwork.com/recipes/food-network-kitchen/pancakes-recipe-1913844")
+#The functions html_form(), set_values(), and submit_form() permit you to query a webpage from R. 
+#More example, of removing row and column from list, renaming columns
+tab_1 <- html_table(nodes[[10]])
+tab_2 <- html_table(nodes[[19]])
+col_names <- c("Team", "Payroll", "Average")
+tab_1 <- tab_1[-1, -1]
+tab_2 <- tab_2[-1,]
+names(tab_2) <- col_names
+names(tab_1) <- col_names
+full_join(tab_1,tab_2, by = "Team")

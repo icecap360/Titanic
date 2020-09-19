@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1593707865141.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1269316895",
+    "id" : "F1A20CFB",
+    "lastKnownWriteTime" : 1593919476,
+    "last_content_update" : 1593919476906,
+    "path" : "~/Titanic/Exploration/Exploration.R",
+    "project_path" : "Exploration/Exploration.R",
+    "properties" : {
+        "cursorPosition" : "9,39",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1593694012877.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "305320528",
+    "id" : "D8243FE6",
+    "lastKnownWriteTime" : 1590948685,
+    "last_content_update" : 1590948685,
+    "path" : "~/Harvard X Data Science/course6_R_Wrangling_1.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "33,52",
+        "scrollLine" : "10"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

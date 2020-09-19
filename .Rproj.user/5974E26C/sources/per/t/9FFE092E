@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1595087136785.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3483430998",
+    "id" : "9FFE092E",
+    "lastKnownWriteTime" : 1595090550,
+    "last_content_update" : 1595090550209,
+    "path" : "~/Titanic/Final_Model/Lasso_model_creation_and_prediction.R",
+    "project_path" : "Final_Model/Lasso_model_creation_and_prediction.R",
+    "properties" : {
+        "cursorPosition" : "56,23",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 18,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

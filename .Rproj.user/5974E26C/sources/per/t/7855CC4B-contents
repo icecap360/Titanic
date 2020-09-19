@@ -1,0 +1,69 @@
+library(tidyverse)
+library(dslabs)
+library(rvest)
+library(dplyr)
+library(stringr)
+#parse_number to conovert string with commas to numbrers
+s <- '10"'
+cat(s) # to see what string looks like
+#escape character is \
+#all functions in stringr is through str_
+#str_detect(x, ",") , str_replace_al(x,',',"")
+# parse_number also removes commas and converts to numeric
+
+murders_new <- murders_raw %>% mutate_at(2:3, parse_number)
+murders_new %>% head
+#dat %>% mutate_at(2:3, funs(str_replace_all(., c("\\$|,"), ""))) %>% 
+#  mutate_at(2:3, as.numeric)
+
+#it helps when writig string parsing to remove the good rows
+  #e.g. functions that has NA when as.numeric
+not_inches <- function(x, smallest = 50, tallest = 84){
+  inches <- suppressWarnings(as.numeric(x))
+  ind <- is.na(inches) | inches < smallest | inches > tallest
+  ind
+}
+
+#The main difference between a regex and a regular string is that a regex can include special characters.
+  #| for or, \\d for digits, 
+#str_subset(x, "cm"), str_view() for first match, likewise str_view_all()
+#str_view(x,"[56]") checks for 5 or 6, [0-9] tests all digits 0 or 1 or 2 or .. 9, [1-20] is 0 1 or 2
+#anchors: must start or end at specific place, ^ and $ respectively like ^\\d$ reads "1" not " 1"
+  #repetition \\d{1,2} for 1 or 2 digits
+#str_replace() replaces the all the first instance of the detected pattern with a specified string.
+#spaces are specified by \\s
+#quantifier for permitting character repetitions infinite or zero amounts,  use *, for 0 or 1 instance we can use ?, one or more +, 
+  #str_replace() and str_replace_all() becareful cause you can turn 6 3 into 63.
+#groups: used for extrction of values, put brackets around the part we want to extract, does not effect detectionsonly what we save
+
+
+#str_match vs str_extract, extract extracts strings that match a pattern not the values defined by the groups
+  #\\i is the value of ith group like str_replace(x,pattern_with_groups, "\\1'\\2")
+#"^([4-7])\\s*[,\\.\\s+]\\s*(\\d*)$" : digit between 4-7, none or more spaces, one of comma dot one-or-more-space m none or more spaces, none or more digits
+#step1: make a function that extracts all bad values (such as those that fail to a.numeric or below/above maximumm,)
+#[a-z] matches 1 or more lowercase letters anywhere in the string
+#this "[A-Z]$" starts searching at end of string
+#use ? instead of space, \\#dot matches any character other then newline, think of \ as ignore any sideeffecctes of char like \\. to match "\." where "\." is dot without finctionality
+  #likewise \\d is a singe digit then capital like \\D is complement or any non digit character, so first \ is to escap first char and second \ is to escape the previous \
+#think in terms of spaces
+
+#Examples of extract and seperate
+#tab %>% separate(x, c("feet", "inches"), sep = "'", fill= "right")
+#tab %>% extract(x, c("feet", "inches"), regex = "(\\d)'(\\d{1,2})")
+#we prefer extract because there are no extra words at the end
+
+#str_trim is a function dedicated to removing extra spaces
+#str_split, use simplify=TRUE to avoid the below, may need to use following tab <- tab[[1]]
+  #if first row is column name we can seperate it out as: col_names <- x[[1]]   x <- x[-1]
+  #str_split returns list to convert to dataframe use map from ---purr package--- map(x, function(y) y[1]) %>% head()
+    #the function is here to tell us how to extract the data from string, but purr can do this automatically asa well
+    #there is also map_chr to return character vector, similarly map_int which can be applied to each column like data.fram(map_chr(x,1), map_char(x,2)...)
+#learn this line tmp_names <- str_c(rep(the_names_1, each = 3), the_names_2[-1], sep = "_")
+#learn   unnest(),   mutate_at(-1, parse_number)
+#common stuff
+#str_split("\\s{2,}", simplify = TRUE) %>% data.frame(stringsAsFactors = FALSE) %>%
+#  setNames(the_names) %>%
+#  mutate_at(-1, parse_number)
+#Change long factor names with the recode() function from the tidyverse. 
+    #other functions recode_factor and fct_reader
+#", | and " accounts for space as well

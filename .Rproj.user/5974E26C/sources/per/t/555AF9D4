@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1594953133529.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1529207009",
+    "id" : "555AF9D4",
+    "lastKnownWriteTime" : 1593040615,
+    "last_content_update" : 1593040615,
+    "path" : "~/Harvard X Data Science/course8_Machine_Learning_5.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "63,52",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 18,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

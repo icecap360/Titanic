@@ -1,0 +1,9 @@
+{
+    "path" : "~/Titanic/Final_Model",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

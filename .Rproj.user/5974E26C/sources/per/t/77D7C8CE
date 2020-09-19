@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1594556396427.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1847934379",
+    "id" : "77D7C8CE",
+    "lastKnownWriteTime" : 1594554776,
+    "last_content_update" : 1594554776,
+    "path" : "~/Titanic/Models/Logistic_Regression.R",
+    "project_path" : "Models/Logistic_Regression.R",
+    "properties" : {
+        "cursorPosition" : "16,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

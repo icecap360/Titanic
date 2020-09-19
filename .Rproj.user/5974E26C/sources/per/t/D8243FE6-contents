@@ -1,0 +1,40 @@
+#set working directory from session OR setwd(), see getwd()
+library(dslabs)
+library(readr) #FASTER
+path <- system.file("extdata", package="dslabs")
+#from tidyverse
+list.files(path) #lists files in paths
+#file.path to get path of file
+#file.copy to copy files to pwd
+filename <- "murders.csv"
+fullpath <- file.path(path, filename)
+file.copy(fullpath, getwd())
+#check by file.exists(filename)
+#various functions to read spreadsheets from readr in tidyverse
+  #read_table, read_csv, read_csv2, read_tsv, read_delim
+  #for whitespace txt, comma csv, semicolon csv, tab tsv, txt files respectively
+  #according to stackoverflow use readxl library and read_excel read_excel("my-spreadsheet.xls", sheet = "data")
+  #read_excel to autodetect or read_xls/read_xslsx for original/newformat,
+      #as well these allow u to read multiple tables in each file (called sheet)
+        #get names of sheets by excel_sheets
+#read_lines to see first few lines of file, useful for finding if header of file
+#head(dat) we recognize that these functions return tibbles 
+
+#Example of reading files
+# file.location <- file.path(system.file("extdata", package = "dslabs"), "murders.csv")
+# file.destination <- file.path(getwd(), "data")
+# file.copy(file.location, file.destination) 
+
+#base Rfunctions, have read. instead of read_
+#read.table, read.csv, read.delim
+dat2 <- read.csv(filename)
+#main difference is now you have dataframce , characters become factors, to avoid set stringAsfactors=FALSE
+#read_csv(url), read_csv("times.txt", col_names = TRUE)
+#downlaod.file(url, "muderers.csv") to make local copy
+#tempdir and tempfile() fo create unlikely file name 
+#There is no header. The col_names=FALSE argument is necessary
+
+# tmp_filename <- tempfile()
+# download.file(url, tmp_filename)
+# dat <- read_csv(tmp_filename)
+# file.remove(tmp_filename)

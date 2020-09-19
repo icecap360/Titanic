@@ -1,0 +1,22 @@
+library(ISLR)
+data("USArrests")
+USArrests.scaled=scale(USArrests)
+correlation=as.dist(1-cor(t(USArrests.scaled)))
+euclidean=dist(USArrests.scaled)^2
+c <- cor(USArrests)
+d <- dist(USArrests)
+
+
+out <- prcomp(USArrests, scale=T)
+out$sdev^2/sum(out$sdev^2)
+
+apply(out$x %*% out$rotation, 2, var)/
+  sum(apply(out$x %*% out$rotation, 2, var))
+
+plot(hclust(dist(USArrests)))
+plot(hclust(dist(USArrests)), 
+     method = "link")
+
+hclust.out=hclust(dist(USArrests),method='complete')
+hclust.cut=cutree(hclust.out,k = 3)
+plot(hclust.cut)

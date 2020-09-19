@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1594347783920.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3875319696",
+    "id" : "FECC52C1",
+    "lastKnownWriteTime" : 1594588514,
+    "last_content_update" : 1594588514769,
+    "path" : "~/Titanic/Models/Lasso_and_Ridge.R",
+    "project_path" : "Models/Lasso_and_Ridge.R",
+    "properties" : {
+        "cursorPosition" : "71,80",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 12,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

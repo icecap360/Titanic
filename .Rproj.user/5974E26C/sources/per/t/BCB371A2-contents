@@ -1,0 +1,55 @@
+library(lubridate)
+library(tidyverse)
+library(ggplot2)
+library(tidyr)
+library(scales)
+#DATES AND TIMES
+#r has types for dates and times, ISO 8601 format, so that sort orders by date
+#has functions year month and day
+#use ymd() assumes first entry month day year, mdy is month day year 
+  #there is function for every possibility
+#Sys.time for time zones, now("GMT") gets GMT in condon right now, 
+  #OlsonNames() to get all time zones
+  #also functions to extract hours minutes days and seconds
+  #like hms("12:34:56")
+#you can combine like this mdy_hms(x)
+
+#use hour and year functions
+
+#TIDYTEXT
+#Use unnest_tokens() to extract individual words and other meaningful chunks of text.
+#get_sentiments() to get sentiments
+
+
+library(lubridate)
+library(tidyverse)
+library(ggplot2)
+library(tidyr)
+library(scales)
+url <- 'http://www.trumptwitterarchive.com/data/realdonaldtrump/%s.json'
+trump_tweets <- map(2009:2017, ~sprintf(url, .x)) %>%
+  map_df(jsonlite::fromJSON, simplifyDataFrame = TRUE) %>%
+  filter(!is_retweet & !str_detect(text, '^"')) %>%
+  mutate(created_at = parse_date_time(created_at, orders = "a b! d! H!:M!:S! z!* Y!", tz="EST")) 
+campaign_tweets <- trump_tweets %>% 
+  extract(source, "source", "Twitter for (.*)") %>%
+  filter(source %in% c("Android", "iPhone") &
+           created_at >= ymd("2015-06-17") & 
+           created_at < ymd("2016-11-08")) %>%
+  filter(!is_retweet) %>%
+  arrange(created_at)
+
+
+#lets define a twitter token
+#The pattern appears complex but all we are defining is a patter that starts with @, # or neither and is followed by any combination of letters or digits
+pattern <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
+campaign_tweets[i,] %>% 
+  unnest_tokens(word, text, token = "regex", pattern = pattern) %>%
+  select(word)
+#filter stopwords, available in tidytext package
+#For each word we want to know if it is more likely to come from
+#an Android tweet or an iPhone tweet. We previously introduced the odds ratio, 
+#a summary statistic useful for quantifying these differences. For each device and a given word, 
+#let's call it y, we compute the odds or the ratio between the proportion of words that are y and 
+#not y and compute the ratio of those odds. 
+#use 0.5 correcyion factor by adding 0.5 to every numerator and denominator cause some ratios are zero

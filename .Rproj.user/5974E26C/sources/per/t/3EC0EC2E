@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1593919913613.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "750363038",
+    "id" : "3EC0EC2E",
+    "lastKnownWriteTime" : 1592138834,
+    "last_content_update" : 1592138834,
+    "path" : "~/Harvard X Data Science/course7_Linear_Regression_2.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "61,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 11,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

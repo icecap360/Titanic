@@ -1,0 +1,191 @@
+#facet_grid, facet_wrap so things not in same row/column so more viewable, 
+#facet picks scale based on all plots which facilitates comparison
+#How to use geom_text/geom_label
+  #labels<-data.frame(country = c("South Korea", "Germany" ), x=c(1975,1980), y=c(5,2))
+  #....geom_text(data=labels, aes(x,y,label=country,), size=5)
+#factors are useful
+#fill = factor(year), so groups based on year
+#graphs with just labels no points
+#density plots: alpha bw and weight mappings, y=..count..
+#easy way to create groups is through case_of,  position=stack , reorder
+#common mistake: forget aes, %>% if FUN error
+#group_by and color good if you want on same graph
+#time series plots, he reccomends labelling rather then legends
+#use log10 or log2 not loge cause that is not interpretable, scale_x_continuous(trans = "log2")
+#plot multiple boxplots on top of each other by 2 layers of boxplots one with fill=year and fill=continent
+#position = "stack" so plots stacked on top of each other
+
+library(dslabs)
+library(ggplot2)
+data("gapminder")
+gapminder
+
+my_try<-filter(gapminder, year==1962 | year==2015) %>% ggplot(aes(x = life_expectancy, 
+           y=fertility, na.rm=TRUE, size=0.1, group=year, color="red")) + geom_point()
+ans<-filter(gapminder, year==2015) %>% ggplot(aes(x = life_expectancy, 
+                          y=fertility, na.rm=TRUE, size=0.1, color=continent)) + geom_point()
+
+
+filter(gapminder, year %in% c(1962,2012)) %>%
+  ggplot(aes(fertility, life_expectancy, col=continent))+
+  geom_point()+facet_grid(continent~year)
+#use .~ prefix or ~. suffix to let facet variable know just one variable depending if you want 
+
+years <- c(1962,2012, 1980,200,1990)
+continents <- c("Europe", "Asia")
+n<-gapminder %>%
+  filter(year%in%years & continent %in% continents) %>%
+  ggplot(aes(fertility, life_expectancy, col=continent))+
+  geom_point()+facet_wrap(.~year)
+
+
+#time series plots, he reccomends labelling rather then legends
+n<-gapminder %>% filter(country %in% c("United States","South Korea", "Germany" )) %>%
+  ggplot(aes(year, fertility, col=country)) + geom_line()
+
+labels<-data.frame(country = c("South Korea", "Germany" ), x=c(1975,1980), y=c(5,2))
+n<-gapminder %>% filter(country %in% c("South Korea", "Germany" )) %>%
+  ggplot(aes(year, fertility, col=country)) + geom_line()+
+  geom_text(data=labels, aes(x,y,label=country,), size=5)+
+  theme(legend.position = "none")
+
+
+#use log10 or log2 not loge cause that is not interpretable
+#use log2 to compare dollar aday so we can see when things double
+gapminder<- mutate(gapminder, dollars_per_day = gdp/population/365)
+n<-gapminder %>% filter(year==1970 & !is.na(gdp)) %>%
+  ggplot(aes(log2(dollars_per_day)))+
+  geom_histogram(binwidth = 1, color="black")
+#the scale_x_continuous function may be better because now the scale is logged
+n<-gapminder %>%
+  filter(year == 1970 & !is.na(gdp)) %>%
+  ggplot(aes(dollars_per_day)) +
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous(trans = "log2")
+past_year<-1970
+p <- gapminder %>%
+  filter(year == past_year & !is.na(gdp)) %>%
+  ggplot(aes(region, dollars_per_day))
+p<-p + geom_boxplot()+
+  theme(axis.text.x = element_text(angle=90, hjust=1)) #this rotates country labels so that they are verticle
+
+
+#re_order to stratify
+fac <-factor(c("Asia", "Asia", "West", "West", "West"))
+value <- c(10,11,12,6,4)
+fac<-reorder(fac, value, FUN=mean)
+levels(fac) #now west is first mecause it has smaller mean based on value vector
+#now we reorder regions and fill based on continents
+p <- gapminder %>%
+  filter(year == past_year & !is.na(gdp)) %>%
+  mutate(region = reorder(region, dollars_per_day, FUN = median)) %>%    # reorder
+  ggplot(aes(region, dollars_per_day, fill = continent)) +    # color by continent
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  xlab("")+
+  scale_y_continuous(trans="log2")+ #so we can see better
+  geom_point(show.legend = FALSE) #there arent that many points so why not
+
+
+
+#comparing distributions, here west vs rest
+west <- c("Western Europe", "Northern Europe", "Southern Europe", "Northern America", "Australia and New Zealand")
+gapminder %>%
+  filter(year %in% c(past_year, present_year) & !is.na(gdp)) %>%
+  mutate(group = ifelse(region %in% west, "West", "Developing")) %>%
+  ggplot(aes(dollars_per_day)) +
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous(trans = "log2") +
+  facet_grid(year ~ group)
+#now we want to compare countries that have data for both 1970 and 2010
+country_list_1 <- gapminder %>%
+  filter(year == past_year & !is.na(dollars_per_day)) %>% .$country
+country_list_2 <- gapminder %>%
+  filter(year == present_year & !is.na(dollars_per_day)) %>% .$country
+country_list <- intersect(country_list_1, country_list_2)
+# make histogram including only countries with data available in both years
+gapminder %>%
+  filter(year %in% c(past_year, present_year) & country %in% country_list) %>%    # keep only selected countries
+  mutate(group = ifelse(region %in% west, "West", "Developing")) %>%
+  ggplot(aes(dollars_per_day)) +
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_x_continuous(trans = "log2") +
+  facet_grid(year ~ group)
+
+
+#making boxplot rest vs west and putting multiple data on top of each other
+p <- gapminder %>%
+  filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+  mutate(region = reorder(region, dollars_per_day, FUN = median)) %>%
+  ggplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  xlab("") + scale_y_continuous(trans = "log2")
+p + geom_boxplot(aes(region, dollars_per_day, fill = continent)) +
+  facet_grid(year ~ .)
+#or to arrange boxplotsontop of each other
+p + geom_boxplot(aes(region, dollars_per_day, fill = factor(year)))
+
+
+#density plots, when using multiple goups of different sizes density will still make area one regardless of size of each group, 
+#solution is it multiply y axis values by size if group
+#so use y=..count.. in aes
+p <- gapminder %>%
+  filter(year == past_year & country %in% country_list) %>%
+  mutate(group = ifelse(region %in% west, "West", "Developing")) %>%
+  ggplot(aes(dollars_per_day, y = ..count.., fill = group)) +
+  scale_x_continuous(trans = "log2")
+p + geom_density(alpha = 0.2, bw = 0.75) + facet_grid(year ~ .)
+#Adding a new region of groups with case_ when
+gapminder <- gapminder %>%
+  mutate(group = case_when(
+    .$region %in% west ~ "West",
+    .$region %in% c("Eastern Asia", "South-Eastern Asia") ~ "East Asia",
+    .$region %in% c("Caribbean", "Central America", "South America") ~ "Latin America",
+    .$continent == "Africa" & .$region != "Northern Africa" ~ "Sub-Saharan Africa",
+    TRUE ~ "Others"))
+gapminder <- gapminder %>%
+  mutate(group = factor(group, levels = c("Others", "Latin America", "East Asia", "Sub-Saharan Africa", "West")))
+#stack = true so plots stacked on top of each other
+p <- gapminder %>%
+  filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+  ggplot(aes(dollars_per_day, fill = group)) +
+  scale_x_continuous(trans = "log2")
+p + geom_density(alpha = 0.2, bw = 0.75, position = "stack") +
+  facet_grid(year ~ .)
+#uses weight_mapping so that things are plotted proportional to weights
+gapminder %>%
+  filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+  group_by(year) %>%
+  mutate(weight = population/sum(population*2)) %>%
+  ungroup() %>%
+  ggplot(aes(dollars_per_day, fill = group, weight = weight)) +
+  scale_x_continuous(trans = "log2") +
+  geom_density(alpha = 0.2, bw = 0.75, position = "stack") + facet_grid(year ~ .)
+
+
+#limit to change x axis/scale
+#logit transformation log(p/1-p), where p/1-p is odds
+  #odds tells how many children more will die then survive
+  #we use logs caus then difference between 99.99 more then 99 is more then 90 is clear 
+#ecological fallacy in conclusing that regional average lower = all countries in region lower:we group by region but ignore variability betwwen regional countries
+gapminder <- gapminder %>%
+  mutate(group = case_when(
+    .$region %in% west ~ "The West",
+    .$region %in% "Northern Africa" ~ "Northern Africa",
+    .$region %in% c("Eastern Asia", "South-Eastern Asia") ~ "East Asia",
+    .$region == "Southern Asia" ~ "Southern Asia",
+    .$region %in% c("Central America", "South America", "Caribbean") ~ "Latin America",
+    .$continent == "Africa" & .$region != "Northern Africa" ~ "Sub-Saharan Africa",
+    .$region %in% c("Melanesia", "Micronesia", "Polynesia") ~ "Pacific Islands"))
+# define a data frame with group average income and average infant survival rate
+surv_income <- gapminder %>%
+  filter(year %in% present_year & !is.na(gdp) & !is.na(infant_mortality) & !is.na(group)) %>%
+  group_by(group) %>%
+  summarize(income = sum(gdp)/sum(population)/365,
+            infant_survival_rate = 1 - sum(infant_mortality/1000*population)/sum(population))
+surv_income %>% arrange(income)
+surv_income %>% ggplot(aes(income, infant_survival_rate, label = group, color = group)) +
+  scale_x_continuous(trans = "log2", limit = c(0.25, 150)) +
+  scale_y_continuous(trans = "logit", limit = c(0.875, .9981),
+                     breaks = c(.85, .90, .95, .99, .995, .998)) +
+  geom_label(size = 3, show.legend = FALSE)

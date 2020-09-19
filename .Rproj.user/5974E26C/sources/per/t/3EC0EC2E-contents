@@ -1,0 +1,139 @@
+library(tidyverse)
+library(HistData)
+library(dplyr)
+library(gridExtra)
+
+data("GaltonFamilies")
+galton_heights <- GaltonFamilies %>%
+  filter(gender == "male") %>%
+  group_by(family) %>%
+  sample_n(1) %>%
+  ungroup() %>%
+  select(father, childHeight) %>%
+  rename(son = childHeight)
+#Although it may appear that BB cause runs, it is actually the HR that cause most of these runs as homeruns=more
+  #BB cause pitchers dont want to pitch strikes to homerun hitters. We say that BB are confounded with HR.
+  #Regression can help us account for confounding.
+#A first approach to check confounding is to keep HRs fixed at a certain value and then examine the relationship between BB and runs.
+  #stratify homeruns by rounding to tenth, and filter out strata with few points
+  #we find that after stratifying for home runs slopes are reduced, and colser to those obtained from singles
+  #wew can also go other way around and we will see that there is still a homerun effects after stratifying for BB's that was same as orginal unstratified
+#we are essentially fitting E[R | BB=x1, HR=x2]=b0+b1(x1)x2+b2(x1)x2
+#if we take into account random variabiility, slopes of strata dont change much, if they are same it implies that b1 of x2 and b2 of x1 are constant
+  #making easier equation b0+b1x1+b2x2, i.e. if HR is fixed there is linear relationship that is independent of Hr between runs and BB, only that slope changes as HR increase
+    #called multivariate regression, adjustement/confounding
+
+#note that in regression we are not assuming things are linear, rather that things are bivariate normal
+#but in practice we write down model explicitly "linear model" which is assumption
+#"Linear" here does not refer to lines, but rather to the fact that the conditional expectation is a linear 
+  #combination of known quantities.
+#e.g. Yi = b0 +b1ci + ei where i=1..N, where xi is not random but fixed (due to conditioning), Yi is random
+  #assume ei normal+independent+ mean 0 +sd does not depend on i and same for every indivisual
+#dont need to assume normality to assume normality
+#linear models are eassily interpretable, to make intercept interpretable rewrite as Yi = b0+b1(xi-xbar)+ei
+  # by centering covariate xi, so now b0 is the predicted height of son with average father
+lm(son ~ father, data = galton_heights) #father is x vaiable
+#if you have E[R|BB=x1,HR=x2]=b0+b1x1+b2x2 and you fix BB=x1 we observe (b0+b1x1) is new y intercept
+
+
+
+#For regression, we aim to find the coefficient values that minimize the distance of the fitted model to the data.
+#Residual sum of squares (RSS) measures the distance between the true value and the predicted value given by the regression line. 
+  #The values that minimize the RSS are called the least squares estimates (LSE).
+#RSS = sum((Yi-(b0+b1xi))^2)
+#lm for getting least squre estimates format: (which value we are predicting)~(inputs), intercept added automatically
+  #after taking lm and storing it in fit, do summary(fit) to extract more data
+#because data is random, our estimates are also random
+    #for proof do a monte carlo simulation for 50 sample points in heights data and compute slopes for each one
+lse <- replicate(1000, {
+  x <- sample_n(galton_heights, 50, replace=TRUE) %>% 
+  lm(son ~ father, data = .) %>% 
+    .$coef
+})
+lse <- data.frame(beta_0 = lse[1,], beta_1 = lse[2,]) 
+p1 <- lse %>% ggplot(aes(beta_0)) + geom_histogram(binwidth = 5, color = "black") 
+p2 <- lse %>% ggplot(aes(beta_1)) + geom_histogram(binwidth = 0.1, color = "black") 
+grid.arrange(p1, p2, ncol = 2)
+lse %>% summarize(se_0 = sd(beta_0), se_1 = sd(beta_1))
+#b0/seb0 and b1/seb1 follow t distribution with N-p degrees of freesom with p is # of parameters in model , in this case 2
+  #t stats depend on assumption that errors is normal
+  #can also contruct confidence interval with this assumption
+  #out hypothesis b0=b1=0 is based on errprs beong normal not data
+#the lse can be strongly correlated, However, the correlation depends on how the predictors are defined or transformed, cor decreases when data normalized
+lse %>% summarize(cor(beta_0, beta_1)) #HOW TO FIND CORRELATION WITHIN TABLE, consider using inner join to compine into table first
+#prediction yhat is lso a random variable
+#we can get confidence interval if we assume errorsnormal/large enough sample to CLT, 
+  #geom_smooth(method="lm") plots confidence intervals around predicted yhat
+#predict takes an lm object and gives predictions
+galton_heights %>%
+  mutate(Y_hat = predict(lm(son ~ father, data=.))) %>%
+  ggplot(aes(father, Y_hat))+geom_line()
+#you can also get confidence interval from predict like predict(model, interval = c("confidence"), level = 0.95)
+      #or yhat <- predict(fit, se.fit=TRUE)
+
+
+#summarize vs mutate? summarize if grouped by , makes a difference
+
+#summarize and group_by automatically returns tibble
+#groupby returns special tibble "grouped tibble", that is why you notice things like "a tibble 6x3
+    #functions like select filer mutate and arrange preserve class
+#tibbles are modern dataframs, default of tidyverse
+#tibbles more readable
+#if you subset a datafram you may not get dataframe, like [,20]
+#trying to access nonexistent column in tibbles leads to warning/error, but in dataframes makes nulls
+#Tibbles can hold more complex objects such as lists or functions.
+#Tibbles can be grouped.
+#lm cannot deal with grouped tibbles as it is nontidyverrse
+#do() a bridge between nongrouping/nondataframe functions
+  #understands grouped tibbles and always returns a dataframe
+dat %>%  group_by(HR) %>% do(fit = lm(R ~ BB, data = .))
+    #if you do this you get a table of lm objects, noot very useful
+#Always name the column
+#for do to be useful output must be a dataframe as well
+get_slope <- function(data){
+  fit <- lm(R ~ BB, data = data)
+  data.frame(slope = fit$coefficients[2], 
+             se = summary(fit)$coefficient[2,2])
+}
+dat %>%  
+  group_by(HR) %>%
+  do(get_slope(.)) #note now here naming the column will produce a column of dataframes (not what we want), and that dot is important
+#to make things easier broom package offers following to make table from lm:
+  #tidy: returns estimates and information as a dataframe, also allows confindence intervals by conf.int
+dat %>%  
+  group_by(HR) %>%
+  do(tidy(lm(R ~ BB, data = .), conf.int = TRUE)) %>%
+  filter(term == "BB") %>%
+  select(HR, estimate, conf.low, conf.high)
+  #pull(estimate) #this gets column
+#put fit from multivariate regrssion in tidy like tidy(fit) to put it into nice pretty table
+#cool shit:geom_errorbar for confidence intervals, if the error bars collide we can assume that slopes dont change with BB's
+#The functions glance() and augment() relate to model specific and observation specific outcomes respectively.
+#multivariate regression: assumes all variables are jointly normal
+#use the following to see the data in a nice table
+##what he does:
+  #make a fit for teams runs vs singles+doubles+triples+hr
+  #compute mean plate appearences per game for teams
+  #computer per plate appearence stats for players
+  #by summing stats and dividing by games/ppa
+  #then adds a column r_hat by predicting using fit and ppa stats for each player (this is as if one player bats for entire team)
+#wranglling: cause players can play multiple positions in one season we use top_n function to pick the most played position by that player
+    #he joins with salary table and filter out players with too much salary
+#A way to actually pick the players for the team can be done using what computer scientists call linear programming.
+  #library(lpSolve), look at code in edx course or learn on your own, all you need is 
+#BB/PA +(singles+2*doubles+3*triples+4*hr)/AB is a better metric because singles no weighted equally as hr
+#filter(n()==2), cool line
+#to find if there is sophmore slump, he finds correlatinobetween years it is (0.46 which is somewhat correlated), hence batting averages accross years is 
+  #only somewhat correlated, also regression to eman
+
+
+
+#regression is also used in measurement error models, when nonrandom covariate like time or
+    #randomness introduced from measurement not sampling/variability, there is extra term in linear equation  e for measurement error
+  #which if you remember has expected value 0  and all that shit
+  #lse equations dont require calculations to be approximately normal
+#The code to check if the estimated parabola fits the data:
+augment(fit) %>%
+  ggplot() +
+  geom_point(aes(time, observed_distance)) +
+  geom_line(aes(time, .fitted), col = "blue")

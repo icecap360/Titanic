@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1595083674363.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1548145032",
+    "id" : "7017807A",
+    "lastKnownWriteTime" : 1595088633,
+    "last_content_update" : 1595088633425,
+    "path" : "~/Titanic/Models/Support_vector_machines.R",
+    "project_path" : "Models/Support_vector_machines.R",
+    "properties" : {
+        "cursorPosition" : "31,14",
+        "scrollLine" : "27",
+        "tempName" : "Untitled2"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 16,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1595090334464.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "296097793",
+    "id" : "AF88A4F7",
+    "lastKnownWriteTime" : 1595090553,
+    "last_content_update" : 1595090553,
+    "path" : "~/Titanic/Final_Model/testans.csv",
+    "project_path" : "Final_Model/testans.csv",
+    "properties" : {
+        "cursorPosition" : "0,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 19,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "text"
+}

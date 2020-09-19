@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1594589637859.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1054560130",
+    "id" : "E9ED314E",
+    "lastKnownWriteTime" : 1594061692,
+    "last_content_update" : 1594061692,
+    "path" : "~/Titanic/Models/Basic_Least_Squares.R",
+    "project_path" : "Models/Basic_Least_Squares.R",
+    "properties" : {
+        "cursorPosition" : "20,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled2"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

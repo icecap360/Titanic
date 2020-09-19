@@ -1,0 +1,54 @@
+library(dslabs)
+library(tidyverse)
+library(caret)
+data(heights)
+mnist <- read_mnist()
+ncol(mnist$train$images)
+data("research_funding_rates")
+rf <- research_funding_rates
+data(heights)
+heights
+#continuous = prediction, regression=continuous
+#predictors are bold/Rv, dropped i=arbitrary input
+
+test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)
+y <- heights$sex
+x <- heights$height
+#Overall accuracy can sometimes be a deceptive measure because of unbalanced classes.
+# Sensitivity, also known as the true positive rate or recall, is the proportion of actual positive outcomes correctly identified as such. 
+  #Specificity, also known as the true negative rate, is the proportion of actual 
+  #negative outcomes that are correctly identified as such.
+#convention with regards to fp,tp,fn,tn is (Actual)(Predicted), precision has to do with true predicted row rows
+  #precision can be increased by prevalence (bad)
+confusionMatrix(data = y_hat, reference = test_set$sex)
+#as opposed to F1 score use the Fmeas function which takes in a function Beta (represents how imporaant sensitivity is to specitivity)
+cutoff <- seq(61, 70)
+F_1 <- map_dbl(cutoff, function(x){
+  y_hat <- ifelse(train_set$height > x, "Male", "Female") %>% 
+    factor(levels = levels(test_set$sex))
+  F_meas(data = y_hat, reference = factor(train_set$sex))
+})
+max(F_1)
+#A machine learning algorithm with very high sensitivity and specificity may not be useful in practice when prevalence is close to either 0 or 1. For example, if you 
+  #develop an algorithm for disease diagnosis with very high sensitivity, but the prevalence of the disease is pretty low, then the precision of your algorithm is probably very low based on Bayes' theorem.
+#A very common approach to evaluating accuracy and F1-score is to compare them graphically by plotting both. A widely used plot that does this is the receiver operating characteristic (ROC) curve. The ROC curve 
+  #plots sensitivity (TPR) versus 1 - specificity or the false positive rate (FPR).
+  #ROC for guessing is identity line
+  #perfect model woul have perfect snsitivity for all values of spectivity (always 1.0)
+  #there weakness is that neither of measures plotted depend on prevalence
+#when prevalence matter do a precision recall plot
+
+
+#because same observation may have different observed values, 
+    #we therefore assign probabilities of this or that class
+  #mathimatically this is: for observed x1,x2,xp
+    #Pr(Y=k|X1=x1...Xp=xp), let p(x) represent conditional probabilities
+    #we pick the max of p1(x)..pk(x), having a good estimate for p(x)
+    #will suffice because we can control specificity and sensitivity
+#many of algorithms will work for continuoues and cetegorical due to connection between 
+  #conditional proababilites and conditional expectations
+  #conditional expectations=conditional proabiblity
+#MSE is RV, so it may be minimized on a dataset but that doesnt mean it is best algorithms
+  #so best algorithms is one that minimizes square loss accross many random samples
+#why do we care about expected value in ML, because it has property that 
+    #yhat=E(Y|X=x) minimizes E((yhat-y)^2|X=x)
