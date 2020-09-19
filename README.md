@@ -2,7 +2,7 @@
 This is the legendary Titanic ML competition – the competition is simple: use machine learning to create a model that predicts which passengers survived the Titanic shipwreck.
 Contest link: https://www.kaggle.com/c/titanic/overview
 
-## Final Position: 4140/18378 ≈ 22nd Percentile
+## Final Rank: 4140/18378 ≈ 22nd Percentile
 
 ![alt text](https://github.com/icecap360/Titanic/blob/master/Result.png?raw=true)
 
