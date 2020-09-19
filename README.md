@@ -11,9 +11,9 @@ Contest link: https://www.kaggle.com/c/titanic/overview
 * Various packages within R 
 
 ## Modelling
-To build models. The focus was on variants of linear regression such as lasso regression, ridge regression, logistic regression, but my sucess came from 
-using conclusion in the initial data exploration to infer possible interaction, polynomial, and step functions terms. Anova tables and coefficient pvalues were used to filter the 
-features. Support vector machines (with linear, polynomial, and gaussian kernels), tree based models such as random forests, and smoothing linear regression were unsucessful.
+To build models. The focus was on variants of linear regression such as lasso regression, ridge regression and logistic regression, but my sucess came from 
+using conclusion in the initial data exploration to infer possible interaction, polynomial, and step functions terms. Anova tables and coefficient pvalues were used to filter 
+features and asses models. Support vector machines (with linear, polynomial, and gaussian kernels), tree based models such as random forests, and smoothing linear regression were all attempted but gave mediocre unsucessful.
 
 In the end, lasso regression with higher order interaction and polynomial terms was the best model. These higher order terms were selected from insight in the exploration section and trial/error.
 
