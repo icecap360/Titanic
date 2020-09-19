@@ -8,6 +8,7 @@ Contest link: https://www.kaggle.com/c/titanic/overview
 
 ## Technologies used: 
 * R
+* RStudio integrated development environment.
 * Various packages within R 
 
 ## Modelling
